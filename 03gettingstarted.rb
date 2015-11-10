@@ -107,9 +107,17 @@ module GettingStarted
       commands.add_command(finishWritingVideoCommand)
       commands.add_tocleanupcommands_removeimagefromcollection(@@imageCollectionIdentifiers[0])
       commands.add_tocleanupcommands_removeimagefromcollection(@@imageCollectionIdentifiers[1])
+      # puts JSON.pretty_generate(commands.commandshash)
       theTime = Smig.perform_timed_commands(commands)
       puts "Time taken: #{theTime}"
       `open "#{@@outputFile}"`
+    rescue RuntimeError => e
+      unless Smig.exitvalue.zero?
+        puts "Exit string: #{Smig.exitstring}"
+        puts "Exit status: #{Smig.exitvalue}"
+      end
+      puts e.message
+      puts e.backtrace.to_s
     end
   end
 end

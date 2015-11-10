@@ -24,10 +24,6 @@ class DrawTextOnVideoFrames
   @@videoWidth = 1280
   @@videoHeight = 720
   
-  def self.outputfilepath
-    return @@outputFile
-  end
-  
   def self.drawto_textbitmap(text1: nil, text2: nil, bitmap: nil)
     drawArrayOfElements = MIDrawElement.new(:arrayofelements)
     borderWidth = 6
@@ -143,12 +139,23 @@ class DrawTextOnVideoFrames
     theCommands.add_command(finalize)
     theCommands
   end
+  
+  def self.run()
+    begin
+      theCommands = self.make_drawtext_on_videoframes_commands()
+      # puts JSON.pretty_generate(theCommands.commandshash)
+      theTime = Smig.perform_timed_commands(theCommands)
+      puts "Time taken: #{theTime}"
+      `open "#{@@outputFile}"`
+    rescue RuntimeError => e
+      unless Smig.exitvalue.zero?
+        puts "Exit string: #{Smig.exitstring}"
+        puts "Exit status: #{Smig.exitvalue}"
+      end
+      puts e.message
+      puts e.backtrace.to_s
+    end
+  end
 end
 
-theCommands = DrawTextOnVideoFrames.make_drawtext_on_videoframes_commands()
-
-# puts JSON.pretty_generate(theCommands.commandshash)
-theTime = Smig.perform_timed_commands(theCommands)
-puts "Time taken: #{theTime}"
-
-`open "#{DrawTextOnVideoFrames.outputfilepath}"`
+DrawTextOnVideoFrames.run()

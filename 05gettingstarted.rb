@@ -25,7 +25,6 @@ module GettingStarted
   @@videotrack_id = MovieTrackIdentifier.make_movietrackid_from_mediatype(
                                                 mediatype: :vide,
                                                trackindex: 0)
-  @@nextframe_time = MovieTime.make_movietime_nextsample
 
   @@windowsize = MIShapes.make_size(640, 360)
   @@bitmapsize = MIShapes.make_size(1280, 720)
@@ -145,9 +144,9 @@ module GettingStarted
                                          importer: nil,
                                   imageidentifier: nil)
     assignFrameCommand = CommandModule.make_assignimage_frommovie_tocollection(
-                              importer, frametime: @@nextframe_time,
-                                           tracks: [ @@videotrack_id ],
-                                       identifier: imageidentifier)
+                          importer, frametime: MovieTime.make_movietime_nextsample,
+                                       tracks: [ @@videotrack_id ],
+                                   identifier: imageidentifier)
     commands.add_command(assignFrameCommand)
   end
 
@@ -276,7 +275,6 @@ module GettingStarted
       puts e.backtrace.to_s
     end
   end
-
 end
 
 GettingStarted.run
