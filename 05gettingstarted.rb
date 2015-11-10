@@ -7,17 +7,17 @@ include CommandModule
 
 # This will combine two movies and join them using a ripple transition filter.
 module GettingStarted
-  @@displayInWindow = true
+  @@displayInWindow = false
 
-  @@movieFileName1 = "Grass2Shady.mov"
-  @@movieFileName2 = "ShadyBorder.mov"
-  @@movieFolder = File.expand_path(File.join(File.dirname(__FILE__), "../movies"))
-  @@movieFile1 = File.join(@@movieFolder, @@movieFileName1)
-  @@movieFile2 = File.join(@@movieFolder, @@movieFileName2)
+  @@movieFilename1 = "Grass2Shady.mov"
+  @@movieFilename2 = "ShadyBorder.mov"
+  @@localFolder = File.expand_path(File.dirname(__FILE__))
+  @@movieFolder = File.join(@@localFolder, "movies")
+  @@generateMovieFolder = File.join(@@localFolder, "generatedmovies")
+  @@inputMovie1 = File.join(@@movieFolder, @@movieFilename1)
+  @@inputMovie2 = File.join(@@movieFolder, @@movieFilename2)
   @@outputFilename = "RippleTransition.mov"
-  @@exportFolder = File.join(File.expand_path(File.dirname(__FILE__)), "../generatedmovies")
-  @@outputFile = File.join(exportFolder, "../generatedmovies", @@outputFilename))
-  # @@outputFile = File.join(@@movieFolder, @@outputFilename)
+  @@outputFile = File.join(@@generateMovieFolder, @@outputFilename)
 
   @@imageidentifier_video1 = SecureRandom.uuid
   @@imageidentifier_video2 = SecureRandom.uuid
@@ -189,8 +189,8 @@ module GettingStarted
   def self.run()
     begin
       commands = SmigCommands.new
-      movieImporter1 = commands.make_createmovieimporter(@@movieFile1)
-      movieImporter2 = commands.make_createmovieimporter(@@movieFile2)
+      movieImporter1 = commands.make_createmovieimporter(@@inputMovie1)
+      movieImporter2 = commands.make_createmovieimporter(@@inputMovie2)
       
       if @@displayInWindow
         windowRect = MIShapes.make_rectangle(xloc: 40, yloc: 80, size: @@windowsize)

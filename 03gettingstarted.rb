@@ -8,11 +8,12 @@ include CommandModule
 # This will double the frame rate of a movie by merging two frames for intermediate
 module GettingStarted
   @@numFrames = 296
-  @@displayInWindow = true
-  @@movieFolder = File.expand_path(File.join(File.dirname(__FILE__), "../movies"))
-  @@generateMovieFolder = File.expand_path(File.join(File.dirname(__FILE__), "../generatedmovies"))
-  @@inputMoviename = "Grass2Shady.mov"
-  @@inputMovie = File.join(@@movieFolder, @@inputMoviename)
+
+  @@localFolder = File.expand_path(File.dirname(__FILE__))
+  @@movieFolder = File.join(@@localFolder, "movies")
+  @@generateMovieFolder = File.join(@@localFolder, "generatedmovies")
+  @@movieFilename = "Grass2Shady.mov"
+  @@inputMovie = File.join(@@movieFolder, @@movieFilename)
   @@outputFilename = "DoubledFrameRate.mov"
   @@outputFile = File.join(@@generateMovieFolder, @@outputFilename)
     
@@ -96,7 +97,7 @@ module GettingStarted
         commands.add_command(addImageToVideoFramesWriter)
       end
       self.draw_imageincollection_to_context(commands,
-                               identifier: @@imageCollectionIdentifiers[(@@numFrames - 1) % 2],
+                               identifier: @@imageCollectionIdentifiers[@@numFrames % 2],
                                      size: @@bitmapsize,
                                   context: bitmap)
       commands.add_command(addImageToVideoFramesWriter)

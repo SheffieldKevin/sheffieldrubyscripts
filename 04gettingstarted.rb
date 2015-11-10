@@ -9,22 +9,23 @@ include MIMovie
 
 # This will draw some info text in bottom left corner.
 class DrawTextOnVideoFrames
-  @@movieDirectory = File.expand_path(File.join(File.dirname(__FILE__), "../movies"))
-  @@movieFileName = "IMG_0874.MOV"
-  @@movieFilePath = File.join(@@movieDirectory, @@movieFileName)
+  @@numFrames = 300
 
-  @@exportFileName = "SheffieldRuby.mov"
-  @@movieFileExportPath = File.join(File.join(File.dirname(__FILE__), "../generatedmovies", @@exportFileName))
+  @@localFolder = File.expand_path(File.dirname(__FILE__))
+  @@movieFolder = File.join(@@localFolder, "movies")
+  @@generatedMovieFolder = File.join(@@localFolder, "generatedmovies")
+  @@movieFilename = "IMG_0874.MOV"
+  @@inputMovie = File.join(@@movieFolder, @@movieFilename)
+  @@outputFilename = "SheffieldRuby.mov"
+  @@outputFile = File.join(@@generatedMovieFolder, @@outputFilename)
 
   @@textBitmapWidth = 300
   @@textBitmapHeight = 150
   @@videoWidth = 1280
   @@videoHeight = 720
-
-  @@numberOfFramesToProcess = 300
   
-  def self.exportfilepath
-    return @@movieFileExportPath
+  def self.outputfilepath
+    return @@outputFile
   end
   
   def self.drawto_textbitmap(text1: nil, text2: nil, bitmap: nil)
@@ -117,19 +118,19 @@ class DrawTextOnVideoFrames
     textBitmap = theCommands.make_createbitmapcontext(size: textBitmapSize)
     videoFrameBitmap = theCommands.make_createbitmapcontext(size: videoFrameSize)
     
-    movieImporter = theCommands.make_createmovieimporter(@@movieFilePath)
+    movieImporter = theCommands.make_createmovieimporter(@@inputMovie)
     
-    videoFramesWriter = theCommands.make_createvideoframeswriter(@@movieFileExportPath)
+    videoFramesWriter = theCommands.make_createvideoframeswriter(@@outputFile)
     addVideoInputCommand = CommandModule.make_addinputto_videowritercommand(
                                                               videoFramesWriter,
                                                    framesize: videoFrameSize,
                                                frameduration: frameDuration)
     theCommands.add_command(addVideoInputCommand)
     JSON.pretty_generate(theCommands.commandshash)
-    @@numberOfFramesToProcess.times do |index|
+    @@numFrames.times do |index|
       drawVideoFrameCommand = self.draw_videoframe(movieImporter, videobitmap: videoFrameBitmap)
       theCommands.add_command(drawVideoFrameCommand)
-      text2 = texts[index * texts.size / @@numberOfFramesToProcess]
+      text2 = texts[index * texts.size / @@numFrames]
       drawTextCommand = self.drawto_textbitmap(text1: "Sheffield", text2: text2, bitmap: textBitmap)
       theCommands.add_command(drawTextCommand)
       drawTextBitmapToVideoFrameCommand = self.draw_textbitmap(videoFrameBitmap, textbitmap: textBitmap)
@@ -147,6 +148,7 @@ end
 theCommands = DrawTextOnVideoFrames.make_drawtext_on_videoframes_commands()
 
 # puts JSON.pretty_generate(theCommands.commandshash)
-Smig.perform_commands(theCommands)
+theTime = Smig.perform_timed_commands(theCommands)
+puts "Time taken: #{theTime}"
 
-`open "#{DrawTextOnVideoFrames.exportfilepath}"`
+`open "#{DrawTextOnVideoFrames.outputfilepath}"`
